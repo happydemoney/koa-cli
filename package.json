@@ -1,0 +1,31 @@
+{
+  "name": "koa-cli",
+  "version": "0.0.1",
+  "description": "koa cli",
+  "main": "index.js",
+  "bin": {
+    "koa-cli": "./bin/koa-cli"
+  },
+  "scripts": {
+    "test": "npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/happydemoney/koa-cli.git"
+  },
+  "keywords": [
+    "koa",
+    "cli",
+    "init"
+  ],
+  "author": "happydemoney",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/happydemoney/koa-cli/issues"
+  },
+  "homepage": "https://github.com/happydemoney/koa-cli#readme",
+  "dependencies": {
+    "commander": "^4.0.1",
+    "inquirer": "^7.0.0"
+  }
+}

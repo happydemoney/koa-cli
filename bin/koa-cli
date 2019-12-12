@@ -1,0 +1,88 @@
+#!/usr/bin/env node
+const path = require('path')
+const fs = require('fs')
+const program = require('commander')
+const inquirer = require('inquirer')
+const pkg = require('../package.json')
+
+// version
+program.version(pkg.version, '-v, --version', 'output the current version')
+
+program
+  .arguments('<project-directory>')
+  .description('create an new koa project')
+  .action(async (name) => {
+
+    const projectDir = path.resolve(name)
+    // 文件夹重复校验
+    if (fs.existsSync(projectDir)) {
+      console.error(`[koa-cli] ERROR: "${projectDir}" already exists.`)
+      process.exit(1)
+    }
+
+    // const { projectName } = await inquirer.prompt({
+    //   name: 'projectName',
+    //   message: 'project name',
+    //   default: 'example'
+    // })
+
+    // const { description } = await inquirer.prompt({
+    //   name: 'description',
+    //   message: 'project description'
+    // })
+
+    // const { author } = await inquirer.prompt({
+    //   name: 'author',
+    //   message: 'project author'
+    // })
+
+    const { license } = await inquirer.prompt({
+      name: 'license',
+      message: 'project license',
+      type: 'list',
+      choices: ['MIT', 'Apache-2.0', 'UNLICENSED'],
+      default: 'MIT'
+    })
+
+    // 创建项目文件夹 - 使用同步方法
+    fs.mkdirSync(name)
+    copyDirectory(path.join(__dirname, '../template/common'), path.join(projectDir, './'))
+    switch (license) {
+      case 'MIT':
+        fs.copyFileSync(
+          path.join(__dirname, '../template/optional/licenses/MIT.md'),
+          path.join(projectDir, './LICENSE')
+        )
+        break
+      case 'Apache-2.0':
+        fs.copyFileSync(
+          path.join(__dirname, '../template/optional/licenses/Apache-2.0.md'),
+          path.join(projectDir, './LICENSE')
+        )
+        break
+      default:
+        break
+    }
+  })
+
+program.parse(process.argv)
+
+function copyDirectory(src, dest) {
+  if (fs.existsSync(dest) == false) {
+      fs.mkdirSync(dest);
+  }
+  if (fs.existsSync(src) == false) {
+      return false;
+  }
+  // 拷贝新的内容进去
+  var dirs = fs.readdirSync(src);
+  dirs.forEach(function(item){
+      var item_path = path.join(src, item);
+      var temp = fs.statSync(item_path);
+      if (temp.isFile()) { // 是文件
+        fs.copyFileSync(item_path, path.join(dest, item));
+      } else if (temp.isDirectory()){ // 是目录
+        copyDirectory(item_path, path.join(dest, item));
+      }
+  });
+}
